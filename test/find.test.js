@@ -14,8 +14,9 @@ describe('find', function() {
   
   describe('finding RSA key', function() {
     // ** MOCKS **
-    var request = function(url, cb) {
-      expect(url).to.equal('https://www.example.com/pki/jwks.json');
+    var request = function(options, cb) {
+      expect(options.url).to.equal('https://www.example.com/pki/jwks.json');
+      expect(options.headers['Accept']).to.equal('application/json');
         
       process.nextTick(function() {
         // http://tools.ietf.org/html/draft-ietf-jose-json-web-key-20#appendix-A.1
@@ -63,8 +64,8 @@ describe('find', function() {
   
   describe('handling unexpected status', function() {
     // ** MOCKS **
-    var request = function(url, cb) {
-      expect(url).to.equal('https://www.example.com/pki/jwks.json');
+    var request = function(options, cb) {
+      expect(options.url).to.equal('https://www.example.com/pki/jwks.json');
         
       process.nextTick(function() {
         return cb(null, { statusCode: 404 }, 'Cannot GET /jwks.json');
@@ -103,8 +104,8 @@ describe('find', function() {
   
   describe('handling unparsable body', function() {
     // ** MOCKS **
-    var request = function(url, cb) {
-      expect(url).to.equal('https://www.example.com/pki/jwks.json');
+    var request = function(options, cb) {
+      expect(options.url).to.equal('https://www.example.com/pki/jwks.json');
         
       process.nextTick(function() {
         return cb(null, { statusCode: 200 }, '<xml></xml>');
