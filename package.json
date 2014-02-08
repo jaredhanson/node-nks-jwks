@@ -1,0 +1,49 @@
+{
+  "name": "nks-jwks",
+  "version": "0.0.0",
+  "description": "Find keys in a JSON Web Key Set.",
+  "keywords": [
+    "jwk",
+    "jwks",
+    "jwt",
+    "jws",
+    "jwe",
+    "pki"
+  ],
+  "author": {
+    "name": "Jared Hanson",
+    "email": "jaredhanson@gmail.com",
+    "url": "http://www.jaredhanson.net/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/jaredhanson/node-nks-jwks.git"
+  },
+  "bugs": {
+    "url": "http://github.com/jaredhanson/node-nks-jwks/issues"
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "http://www.opensource.org/licenses/MIT"
+    }
+  ],
+  "main": "./lib",
+  "dependencies": {
+    "request": "2.x.x",
+    "base64url": "0.0.x",
+    "node-forge": "0.2.x",
+    "debug": "0.7.x"
+  },
+  "devDependencies": {
+    "mocha": "1.x.x",
+    "chai": "1.x.x",
+    "proxyquire": "0.5.x"
+  },
+  "engines": {
+    "node": "*"
+  },
+  "scripts": {
+    "test": "node_modules/.bin/mocha --reporter spec --require test/bootstrap/node test/*.test.js"
+  }
+}
