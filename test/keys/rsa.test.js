@@ -1,6 +1,6 @@
 /* global describe, it, expect */
 
-var RSAKey = require('../../lib/types/rsa');
+var RSAKey = require('../../lib/keys/rsa');
 
 
 describe('RSAKey', function() {
