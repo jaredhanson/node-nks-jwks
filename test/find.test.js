@@ -12,10 +12,10 @@ describe('find', function() {
     expect(find).to.be.a('function');
   });
   
-  describe('finding RSA key', function() {
+  describe('finding RSA key with alg option', function() {
     // ** MOCKS **
     var request = function(options, cb) {
-      expect(options.url).to.equal('https://www.example.com/pki/jwks.json');
+      expect(options.url).to.equal('https://www.example.com/jwks.json');
       expect(options.headers['Accept']).to.equal('application/json');
         
       process.nextTick(function() {
@@ -34,7 +34,7 @@ describe('find', function() {
       var entity = { 
         id: 'https://www.example.com/',
         issuer: 'https://www.example.com/',
-        jwksUrl: 'https://www.example.com/pki/jwks.json'
+        jwksUrl: 'https://www.example.com/jwks.json'
       };
       
       find(entity, { alg: 'RS256' }, function(err, k) {
@@ -65,7 +65,7 @@ describe('find', function() {
   describe('handling unexpected status', function() {
     // ** MOCKS **
     var request = function(options, cb) {
-      expect(options.url).to.equal('https://www.example.com/pki/jwks.json');
+      expect(options.url).to.equal('https://www.example.com/jwks.json');
         
       process.nextTick(function() {
         return cb(null, { statusCode: 404 }, 'Cannot GET /jwks.json');
@@ -81,7 +81,7 @@ describe('find', function() {
       var entity = { 
         id: 'https://www.example.com/',
         issuer: 'https://www.example.com/',
-        jwksUrl: 'https://www.example.com/pki/jwks.json'
+        jwksUrl: 'https://www.example.com/jwks.json'
       };
       
       find(entity, { alg: 'RS256' }, function(err, k) {
@@ -93,7 +93,7 @@ describe('find', function() {
     
     it('should error', function() {
       expect(error).to.be.an.instanceOf(Error);
-      expect(error.message).to.equal('Unexpected status 404 from https://www.example.com/pki/jwks.json');
+      expect(error.message).to.equal('Unexpected status 404 from https://www.example.com/jwks.json');
       expect(error.status).to.be.undefined;
     });
     
@@ -105,7 +105,7 @@ describe('find', function() {
   describe('handling unparsable body', function() {
     // ** MOCKS **
     var request = function(options, cb) {
-      expect(options.url).to.equal('https://www.example.com/pki/jwks.json');
+      expect(options.url).to.equal('https://www.example.com/jwks.json');
         
       process.nextTick(function() {
         return cb(null, { statusCode: 200 }, '<xml></xml>');
@@ -121,7 +121,7 @@ describe('find', function() {
       var entity = { 
         id: 'https://www.example.com/',
         issuer: 'https://www.example.com/',
-        jwksUrl: 'https://www.example.com/pki/jwks.json'
+        jwksUrl: 'https://www.example.com/jwks.json'
       };
       
       find(entity, { alg: 'RS256' }, function(err, k) {
@@ -133,11 +133,40 @@ describe('find', function() {
     
     it('should error', function() {
       expect(error).to.be.an.instanceOf(Error);
-      expect(error.message).to.equal('Failed to parse JWK Set from https://www.example.com/pki/jwks.json');
+      expect(error.message).to.equal('Failed to parse JWK Set from https://www.example.com/jwks.json');
       expect(error.status).to.be.undefined;
     });
     
     it('should not find key', function() {
+      expect(key).to.be.undefined;
+    });
+  });
+  
+  describe('attempting to resolve from an entity that does not support JWK Set', function() {
+    // ** MOCKS **
+    var request = function(options, cb) {
+      throw new Error('should not be called');
+    };
+    
+    
+    var setup = $require(MODULE_PATH, { request: request });
+    var find = setup();
+    var key, error;
+    
+    before(function(done) {
+      var entity = { 
+        id: 'https://www.example.com/',
+        issuer: 'https://www.example.com/'
+      };
+      
+      find(entity, { alg: 'RS256' }, function(err, k) {
+        if (err) { return done(err); }
+        key = k;
+        done();
+      });
+    });
+    
+    it('should pass without error or key', function() {
       expect(key).to.be.undefined;
     });
   });
